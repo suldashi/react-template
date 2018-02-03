@@ -1,8 +1,11 @@
 import React from "react";
 
+const autoBind = require("react-auto-bind");
+
 export class HomeComponent extends React.Component {
     constructor(props) {
         super(props);
+        autoBind(this);
     }
 
     render() {
