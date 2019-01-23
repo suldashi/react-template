@@ -4,7 +4,6 @@ const minify = require('gulp-minify');
 const babel = require('gulp-babel');
 const buffer = require('vinyl-buffer');
 const source = require('vinyl-source-stream');
-const runSequence = require("run-sequence");
 const del = require("del");
 
 gulp.task("clean",() => {
@@ -13,13 +12,14 @@ gulp.task("clean",() => {
 
 gulp.task('apply-prod-environment', function() {
 	process.env.NODE_ENV = 'production';
+	return Promise.resolve();
 });
 
 gulp.task("ui-babel", () => {
 	return gulp.src(["src/ui/**/*.jsx","src/ui/**/*.js"])
 	.pipe(babel({
-		presets: ["react","env","modern-browsers"],
-		plugins:["transform-runtime"]
+		presets: ["@babel/preset-env", "@babel/preset-react"],
+		plugins: ["@babel/plugin-transform-runtime"]
 	}))
 	.pipe(gulp.dest("tmp/ui/"));
 });
@@ -43,18 +43,12 @@ gulp.task("minify", () => {
 		.pipe(gulp.dest("public/js"));
 });
 
-gulp.task("ui-min", () => {
-	runSequence("apply-prod-environment","ui-babel","browserify","minify","clean");
-});
+gulp.task("ui-min", gulp.series("apply-prod-environment","ui-babel","browserify","minify","clean"));
 
-gulp.task("ui", () => {
-	return runSequence("ui-babel","browserify","clean");
-});
+gulp.task("ui", gulp.series("ui-babel","browserify","clean"));
 
-gulp.task("watch-ui", () => {
-	return gulp.watch("src/ui/**/*.jsx",["ui"]);
+gulp.task("watch", () => {
+	return gulp.watch("src/ui/**/*.jsx",gulp.series("ui"));
 })
 
-gulp.task("default", () => {
-	return runSequence("ui");
-});
+gulp.task("default", gulp.series("ui"));
