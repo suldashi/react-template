@@ -16,6 +16,6 @@ export class HomeComponent extends React.Component {
     }
 
     async asyncPromiseTest() {
-        return Promise.resolve("async/await is working successfully!");
+        return "async/await is working successfully!";
     }
 }
