@@ -48,7 +48,7 @@ gulp.task("ui-min", gulp.series("apply-prod-environment","ui-babel","browserify"
 gulp.task("ui", gulp.series("ui-babel","browserify","clean"));
 
 gulp.task("watch", () => {
-	return gulp.watch("src/ui/**/*.jsx",gulp.series("ui"));
-})
+	return gulp.watch(["src/ui/**/*.jsx","src/ui/**/*.js"],gulp.series("ui"));
+});
 
 gulp.task("default", gulp.series("ui"));
